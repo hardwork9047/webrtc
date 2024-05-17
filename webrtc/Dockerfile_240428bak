@@ -1,0 +1,54 @@
+#FROM python:3.9
+# FROM python:3.9.7-slim-buster
+FROM ultralytics/ultralytics
+USER root
+
+#ENV DEBIAN_FRONTEND=noninteractive
+#ENV PATH="/usr/local/bin:${PATH}"
+
+
+### Flask App ############################
+WORKDIR /usr/yolov8_31plat_test/src
+#ENV FLASKDockerfile_APP=app
+RUN export http_proxy="http://proxy50.adm.toyota.co.jp:15520"
+RUN export https_proxy="http://proxy50.adm.toyota.co.jp:15520"
+
+# wx Library
+RUN mkdir -p /root/.config/pip
+RUN echo "[global]" > /root/.config/pip/pip.conf
+RUN echo "proxy = http://proxy50.adm.toyota.co.jp:15520" >> /root/.config/pip/pip.conf
+RUN echo "Acquire::http::proxy \"http://proxy50.adm.toyota.co.jp:15520\";" >> /etc/apt/apt.conf
+RUN echo "Acquire::https::proxy \"http://proxy50.adm.toyota.co.jp:15520\";" >> /etc/apt/apt.conf
+RUN cat /etc/resolv.conf
+
+# システムの更新とpingコマンドのインストール
+
+RUN apt-get install -y iputils-ping
+#RUN apt-get update
+#RUN apt-get clean
+RUN rm -rf /var/lib/apt/lists/*
+#Dockerfileがあるところからの相対パス
+COPY requirements.txt /usr/yolov8_31plat_test/src
+
+RUN pip install --upgrade pip
+RUN pip install -r /usr/yolov8_31plat_test/src/requirements.txt
+
+# インタラクティブなプロンプトなしでパッケージをインストール
+ENV DEBIAN_FRONTEND=noninteractive
+
+# タイムゾーンのデータをインストール
+RUN apt-get update && apt-get install -y tzdata
+#RUN apt-get install -y tzdata
+
+# タイムゾーンを東京に設定
+ENV TZ=Asia/Tokyo
+
+# システム時刻を設定
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
+
+#RUN ln -snf /usr/share/zoneinfo/Asia/Tokyo /etc/localtime && echo Asia/Tokyo > /etc/timezone
+# RUN pip install --upgrade pip
+# RUN pip install -r /usr/powerbi/requirements.txt
+
+#CMD ["python3", "230912_predict_jn_stream_pallet.py"]

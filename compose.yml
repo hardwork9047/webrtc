@@ -1,0 +1,24 @@
+version: "3"
+services:
+
+  container_01:
+    restart: always
+    build: ./webrtc
+    container_name: webrtc
+    tty: true
+    volumes:
+      - ./webrtc:/usr/webrtc
+    ports:
+     - '5000:5000'
+     - '5001:5001'
+    #command: python3 /usr/yolov8_31plat/src/230617_predict_jn_stream.py
+    networks:
+      mynetwork:
+        ipv4_address: 172.32.0.11  # 172.21.0.1はネットワークアドレスなので使用できません。次の利用可能なアドレスを指定します
+
+networks:
+  mynetwork:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.32.0.0/24
