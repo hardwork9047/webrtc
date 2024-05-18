@@ -11,7 +11,7 @@ services:
     volumes:
       - ./webrtc:/usr/webrtc
     ports:
-     - '6000:6000'
+     - '5000:5000'
     #command: python3 /usr/yolov8_31plat/src/230617_predict_jn_stream.py
     networks:
       default:
