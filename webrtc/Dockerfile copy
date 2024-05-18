@@ -1,6 +1,10 @@
 FROM python:3.9
 USER root
 
+RUN echo "deb http://deb.debian.org/debian bookworm main" > /etc/apt/sources.list && \
+    echo "deb http://deb.debian.org/debian bookworm-updates main" >> /etc/apt/sources.list && \
+    echo "deb http://deb.debian.org/debian-security bookworm-security main" >> /etc/apt/sources.list
+
 RUN apt-get update
 RUN apt-get -y install locales locales-all && \
     localedef -f UTF-8 -i ja_JP ja_JP.UTF-8
@@ -12,7 +16,7 @@ ENV TERM xterm
 
 COPY requirements.txt /root/
 
-RUN apt-get install -y vim less iputils-ping curl iproute2 traceroute
+RUN apt-get install -y vim less iputils-ping curl iproute2
 RUN pip install --upgrade pip
 RUN pip install --upgrade setuptools
 EXPOSE 5000

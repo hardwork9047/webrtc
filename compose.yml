@@ -1,20 +1,33 @@
-version: "3"
+# version: "3"
 services:
 
-  container_01:
+  webrtc:
     restart: always
-    build: ./webrtc
+    build:
+      context: ./webrtc
+      network: host
     container_name: webrtc
     tty: true
     volumes:
       - ./webrtc:/usr/webrtc
     ports:
-     - '5000:5000'
-     - '5001:5001'
+     - '6000:6000'
     #command: python3 /usr/yolov8_31plat/src/230617_predict_jn_stream.py
     networks:
+      default:
       mynetwork:
         ipv4_address: 172.32.0.11  # 172.21.0.1はネットワークアドレスなので使用できません。次の利用可能なアドレスを指定します
+    cap_add:
+      - NET_RAW
+      - NET_ADMIN
+
+  container_02:
+    image: alpine
+    container_name: alpine_test
+    command: ["sh", "-c", "while :; do sleep 10; done"]
+    networks:
+      mynetwork:
+        ipv4_address: 172.32.0.12
 
 networks:
   mynetwork:
